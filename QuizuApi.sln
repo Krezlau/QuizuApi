@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizuApi", "QuizuApi\QuizuApi.csproj", "{81EF7AFF-B000-48CF-ABB6-D25ABC7679AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81EF7AFF-B000-48CF-ABB6-D25ABC7679AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81EF7AFF-B000-48CF-ABB6-D25ABC7679AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81EF7AFF-B000-48CF-ABB6-D25ABC7679AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81EF7AFF-B000-48CF-ABB6-D25ABC7679AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A13A032-AEFD-41D3-97B6-A47CB55BE18A}
+	EndGlobalSection
+EndGlobal
