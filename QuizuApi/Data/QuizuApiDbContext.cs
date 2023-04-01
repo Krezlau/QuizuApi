@@ -26,10 +26,6 @@ namespace QuizuApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<QuizComment>()
-                .HasOne(c => c.Quiz)
-                .WithMany(q => q.Comments)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void TrackChanges()

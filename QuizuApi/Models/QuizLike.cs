@@ -5,7 +5,7 @@ namespace QuizuApi.Models
     public class QuizLike : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         public virtual User User { get; set; }
         [ForeignKey(nameof(UserId))]
         public required string UserId { get; set; }

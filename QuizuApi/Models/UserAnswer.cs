@@ -5,7 +5,7 @@ namespace QuizuApi.Models
     public class UserAnswer : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         public virtual Question Question { get; set; }
         [ForeignKey(nameof(QuestionId))]
         public required Guid QuestionId { get; set; }

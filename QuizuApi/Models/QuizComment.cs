@@ -6,7 +6,7 @@ namespace QuizuApi.Models
     public class QuizComment : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         public virtual User Author { get; set; }
         [ForeignKey(nameof(AuthorId))]
         public required string AuthorId { get; set; }

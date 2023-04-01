@@ -7,7 +7,7 @@ namespace QuizuApi.Models
     public class Tag : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
         public required string Name { get; set; }

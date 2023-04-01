@@ -19,9 +19,9 @@ namespace QuizuApi.Models
         public string? About { get; set; } = string.Empty;
         public required DateTime JoinedAt { get; set; }
         [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual List<Followee> Followers { get; set; } = new List<Followee>();
+        public virtual List<User> Followers { get; set; } = new List<User>();
         [DeleteBehavior(DeleteBehavior.Restrict)]
-        public virtual List<Follower> Following { get; set; } = new List<Follower>();
+        public virtual List<User> Following { get; set; } = new List<User>();
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public virtual List<Quiz> Quizzes { get; set; }
         [DeleteBehavior(DeleteBehavior.Restrict)]

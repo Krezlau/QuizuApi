@@ -7,7 +7,7 @@ namespace QuizuApi.Models
     public class Quiz : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public required Guid Id { get; set; }
+        public Guid Id { get; set; }
         [MinLength(Constraints.TitleLengthMin)]
         [MaxLength(Constraints.TitleLengthMax)]
         public required string Title { get; set; }
