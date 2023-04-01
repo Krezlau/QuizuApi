@@ -11,10 +11,25 @@ namespace QuizuApi.Data
         public QuizuApiDbContext(DbContextOptions<QuizuApiDbContext> options) : base(options) { }
 
         public override DbSet<User> Users { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<QuizComment> QuizComments { get; set; }
+        public DbSet<QuizLike> QuizLikes { get; set; }
+        public DbSet<QuizPlay> QuizPlays { get; set; }
+        public DbSet<QuizSettings> QuizSettings { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<UserFollow> UserFollows { get; set; }
+        public DbSet<UserSettings> UserSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<QuizComment>()
+                .HasOne(c => c.Quiz)
+                .WithMany(q => q.Comments)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void TrackChanges()

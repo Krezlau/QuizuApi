@@ -2,7 +2,7 @@
 {
     public class AuditModel
     {
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastModifiedAt { get; set; }
+        public required DateTime CreatedAt { get; set; }
+        public DateTime? LastModifiedAt { get; set; }
     }
 }
