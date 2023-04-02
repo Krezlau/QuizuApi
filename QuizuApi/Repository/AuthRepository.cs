@@ -57,7 +57,7 @@ namespace QuizuApi.Repository
                 throw new AuthException("Incorrect password.");
             }
 
-            string token = await _accessTokenService.GenerateJwtTokenAsync(user);
+            string token = await _accessTokenService.GenerateJwtTokenAsync(user.Id);
             string refreshToken = await _refreshTokenService.RetrieveOrGenerateRefreshTokenAsync(user.Id);
 
             return new LoginResponseDTO()
@@ -139,7 +139,7 @@ namespace QuizuApi.Repository
             }
             else
             {
-                StringBuilder errors = new StringBuilder();
+                var errors = new StringBuilder();
                 foreach (var error in result.Errors)
                 {
                     errors.AppendLine(error.Description);

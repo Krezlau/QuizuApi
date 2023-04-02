@@ -2,7 +2,7 @@
 
 namespace QuizuApi.Repository.IRepository
 {
-    public interface IUserRepository
+    public interface IAuthRepository
     {
         Task<bool> IsUniqueUserAsync(string username);
         Task<LoginResponseDTO> LoginUserAsync(LoginRequestDTO loginRequestDTO);

@@ -31,5 +31,6 @@ namespace QuizuApi.Models
         public virtual List<QuizLike> QuizLikes { get; set; }
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public virtual List<QuizComment> QuizComments { get; set; }
+        public virtual RefreshToken RefreshToken { get; set; }
     }
 }

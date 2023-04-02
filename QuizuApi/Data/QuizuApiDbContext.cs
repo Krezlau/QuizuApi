@@ -22,6 +22,7 @@ namespace QuizuApi.Data
         public DbSet<UserAnswer> UserAnswers { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
         public DbSet<UserSettings> UserSettings { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
