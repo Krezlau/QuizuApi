@@ -167,7 +167,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("QuizTag");
+                    b.ToTable("QuizTag", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.Answer", b =>
@@ -197,7 +197,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.Question", b =>
@@ -224,7 +224,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("Questions");
+                    b.ToTable("Questions", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.Quiz", b =>
@@ -260,7 +260,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Quizzes");
+                    b.ToTable("Quizzes", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.QuizComment", b =>
@@ -293,7 +293,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("QuizComments");
+                    b.ToTable("QuizComments", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.QuizLike", b =>
@@ -321,7 +321,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("QuizLikes");
+                    b.ToTable("QuizLikes", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.QuizPlay", b =>
@@ -349,7 +349,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("QuizPlays");
+                    b.ToTable("QuizPlays", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.QuizSettings", b =>
@@ -381,7 +381,7 @@ namespace QuizuApi.Migrations
                     b.HasIndex("QuizId")
                         .IsUnique();
 
-                    b.ToTable("QuizSettings");
+                    b.ToTable("QuizSettings", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.RefreshToken", b =>
@@ -413,7 +413,7 @@ namespace QuizuApi.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.Tag", b =>
@@ -435,7 +435,7 @@ namespace QuizuApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.User", b =>
@@ -557,7 +557,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("QuizPlayId");
 
-                    b.ToTable("UserAnswers");
+                    b.ToTable("UserAnswers", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.UserFollow", b =>
@@ -586,7 +586,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("UserFollowingId");
 
-                    b.ToTable("UserFollows");
+                    b.ToTable("UserFollows", (string)null);
                 });
 
             modelBuilder.Entity("QuizuApi.Models.UserSettings", b =>
@@ -619,7 +619,7 @@ namespace QuizuApi.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSettings", (string)null);
                 });
 
             modelBuilder.Entity("UserUser", b =>
@@ -634,7 +634,7 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("FollowingId");
 
-                    b.ToTable("UserUser");
+                    b.ToTable("UserUser", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -8,16 +8,20 @@ namespace QuizuApi.Models
     {
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
-        public required string Name { get; set; }
+        [Required]
+        public string Name { get; set; }
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
-        public required string Surname { get; set; }
+        [Required]
+        public string Surname { get; set; }
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
-        public required string Location { get; set; } = string.Empty;
+        [Required]
+        public string Location { get; set; } = string.Empty;
         [MaxLength(Constraints.AboutLengthMax)]
         public string? About { get; set; } = string.Empty;
-        public required DateTime JoinedAt { get; set; }
+        [Required]
+        public DateTime JoinedAt { get; set; }
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public virtual List<User> Followers { get; set; } = new List<User>();
         [DeleteBehavior(DeleteBehavior.Restrict)]
