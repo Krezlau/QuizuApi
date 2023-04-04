@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
     public class UserAnswer : AuditModel
     {

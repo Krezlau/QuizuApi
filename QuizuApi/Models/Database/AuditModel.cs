@@ -1,4 +1,4 @@
-﻿namespace QuizuApi.Models
+﻿namespace QuizuApi.Models.Database
 {
     public class AuditModel
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
     public class UserFollow : AuditModel
     {

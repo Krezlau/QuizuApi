@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using QuizuApi.Models.DTOs;
-using QuizuApi.Models;
 using QuizuApi.Repository.IRepository;
 using System.Text;
 using QuizuApi.Data;
 using Microsoft.EntityFrameworkCore;
 using QuizuApi.Services;
 using QuizuApi.Exceptions;
+using QuizuApi.Models.Database;
 
 namespace QuizuApi.Repository
 {
@@ -41,7 +41,7 @@ namespace QuizuApi.Repository
             return user is null;
         }
 
-        public async Task<LoginResponseDTO> LoginUserAsync(LoginRequestDTO loginRequestDTO)
+        public async Task<(string accessToken, string userId, string refreshToken)> LoginUserAsync(LoginRequestDTO loginRequestDTO)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginRequestDTO.Email);
 
@@ -60,12 +60,7 @@ namespace QuizuApi.Repository
             string token = await _accessTokenService.GenerateJwtTokenAsync(user.Id);
             string refreshToken = await _refreshTokenService.RetrieveOrGenerateRefreshTokenAsync(user.Id);
 
-            return new LoginResponseDTO()
-            {
-                AccessToken = token,
-                RefreshToken = refreshToken,
-                UserId = user.Id
-            };
+            return (token, user.Id, refreshToken);
         }
 
         public async Task<bool> RegisterUserAsync(RegisterRequestDTO registerRequestDTO)

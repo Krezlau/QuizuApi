@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
     public class User : IdentityUser
     {

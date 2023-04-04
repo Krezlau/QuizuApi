@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
     public class QuizComment : AuditModel
     {

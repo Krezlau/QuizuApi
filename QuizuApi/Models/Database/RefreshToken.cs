@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
     public class RefreshToken
     {

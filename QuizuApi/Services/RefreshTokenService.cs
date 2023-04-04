@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizuApi.Data;
-using QuizuApi.Models;
+using QuizuApi.Models.Database;
 
 namespace QuizuApi.Services
 {

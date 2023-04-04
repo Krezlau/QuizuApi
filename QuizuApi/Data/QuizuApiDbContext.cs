@@ -1,8 +1,8 @@
 ﻿using Azure;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
-using QuizuApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using QuizuApi.Models.Database;
 
 namespace QuizuApi.Data
 {
