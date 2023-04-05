@@ -5,7 +5,7 @@ namespace QuizuApi.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        Task<PageResultDTO<T>> GetPage(int pageNumber,
+        Task<PageResultDTO<T>> GetPageAsync(int pageNumber,
                                        int pageSize,
                                        Expression<Func<T, bool>>? filter = null,
                                        string? includeProperties = null);

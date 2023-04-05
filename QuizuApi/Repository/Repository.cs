@@ -30,7 +30,7 @@ namespace QuizuApi.Repository
             await SaveAsync();
         }
 
-        public async Task<PageResultDTO<T>> GetPage(int pageNumber,
+        public async Task<PageResultDTO<T>> GetPageAsync(int pageNumber,
                                                     int pageSize,
                                                     Expression<Func<T, bool>>? filter = null,
                                                     string? includeProperties = null)
