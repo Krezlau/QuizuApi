@@ -3,6 +3,7 @@ using QuizuApi.Repository.IRepository;
 using System.Linq.Expressions;
 using System.Linq;
 using QuizuApi.Data;
+using QuizuApi.Models.DTOs;
 
 namespace QuizuApi.Repository
 {
@@ -27,6 +28,37 @@ namespace QuizuApi.Repository
         {
             dbSet.Remove(entity);
             await SaveAsync();
+        }
+
+        public async Task<PageResultDTO<T>> GetPage(int pageNumber,
+                                                    int pageSize,
+                                                    Expression<Func<T, bool>>? filter = null,
+                                                    string? includeProperties = null)
+        {
+            IQueryable<T> query = dbSet;
+
+            if (filter is not null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeProperties is not null)
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            var pageCount = await query.CountAsync();
+
+            var result = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return new PageResultDTO<T>()
+            {
+                PageCount = pageCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                QueryResult = result
+            };
         }
 
         public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter, string? includeProperties = null)
