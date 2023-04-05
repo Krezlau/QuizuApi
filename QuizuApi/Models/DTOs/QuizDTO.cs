@@ -19,7 +19,7 @@ namespace QuizuApi.Models.DTOs
             Id = quiz.Id;
             Title = quiz.Title;
             Description = quiz.Description;
-            AuthorName = quiz.Author.Name;
+            AuthorName = quiz.Author.UserName is null ? "[deleted user]" : quiz.Author.UserName;
             AuthorId = quiz.AuthorId;
             LikesCount = activity.LikesCount;
             PlaysCount = activity.PlaysCount;

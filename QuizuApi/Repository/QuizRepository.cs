@@ -28,5 +28,18 @@ namespace QuizuApi.Repository
             }
             return result;
         }
+
+        public override async Task CreateAsync(Quiz entity)
+        {
+            await base.CreateAsync(entity);
+            _context.QuizSettings.Add(new QuizSettings()
+            {
+                AllowReplays = true,
+                AnswerTimeS = 10,
+                QuestionsPerPlay = -1, // all questions
+                QuizId = entity.Id,
+            });
+            await _context.SaveChangesAsync();
+        }
     }
 }

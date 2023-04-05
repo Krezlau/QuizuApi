@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuizuApi.Models;
@@ -70,7 +71,20 @@ namespace QuizuApi.Controllers
                 });
             }
 
-            var quiz = await _quizRepo.GetAsync(q => q.Id == quizId, includeProperties: "Tags,Author,Settings");
+            Quiz? quiz;
+            try
+            {
+                quiz = await _quizRepo.GetAsync(q => q.Id == quizId, includeProperties: "Tags,Author,Settings");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Something went wrong." }
+                });
+            }
 
             if (quiz is null)
             {
@@ -89,6 +103,51 @@ namespace QuizuApi.Controllers
                 StatusCode = HttpStatusCode.OK,
                 IsSuccess = true,
                 Result = ret
+            });
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<ApiResponse>> CreateEmptyQuiz([FromBody] QuizCreateRequestDTO request)
+        {
+            var userId = _tokenReader.RetrieveUserIdFromRequest(Request);
+
+            if (userId is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid user." }
+                });
+            }
+
+            var quiz = new Quiz()
+            {
+                AuthorId = userId,
+                Title = request.Title,
+            };
+            try
+            {
+                await _quizRepo.CreateAsync(quiz);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Something went wrong." }
+                });
+            }
+
+            return CreatedAtRoute(quiz.Id, new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.Created,
+                IsSuccess = true,
             });
         }
     }

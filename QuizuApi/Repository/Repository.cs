@@ -18,13 +18,13 @@ namespace QuizuApi.Repository
             this.dbSet = _context.Set<T>();
         }
 
-        public async Task CreateAsync(T entity)
+        public virtual async Task CreateAsync(T entity)
         {
             await dbSet.AddAsync(entity);
             await SaveAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public virtual async Task DeleteAsync(T entity)
         {
             dbSet.Remove(entity);
             await SaveAsync();
