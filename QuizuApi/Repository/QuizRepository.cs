@@ -41,5 +41,19 @@ namespace QuizuApi.Repository
             });
             await _context.SaveChangesAsync();
         }
+
+        public override async Task DeleteAsync(Quiz entity)
+        {
+            var questions = await _context.Questions.Where(q => q.QuizId == entity.Id).ToArrayAsync();
+            foreach (var q in questions)
+            {
+                _context.Answers.RemoveRange(await _context.Answers.Where(a => a.QuestionId == q.Id).ToArrayAsync());
+            }
+            _context.Questions.RemoveRange(questions);
+            _context.QuizLikes.RemoveRange(await _context.QuizLikes.Where(ql => ql.QuizId == entity.Id).ToArrayAsync());
+            _context.QuizComments.RemoveRange(await _context.QuizComments.Where(qc => qc.QuizId == entity.Id).ToArrayAsync());
+            _context.QuizPlays.RemoveRange(await _context.QuizPlays.Where(qp => qp.QuizId == entity.Id).ToArrayAsync());
+            await base.DeleteAsync(entity);
+        }
     }
 }
