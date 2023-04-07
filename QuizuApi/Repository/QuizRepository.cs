@@ -29,6 +29,11 @@ namespace QuizuApi.Repository
             return result;
         }
 
+        public async Task<bool> CheckIfTitleAvailable(string title)
+        {
+            return await dbSet.AnyAsync(q => q.Title == title);
+        }
+
         public override async Task CreateAsync(Quiz entity)
         {
             await base.CreateAsync(entity);

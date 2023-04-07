@@ -125,6 +125,16 @@ namespace QuizuApi.Controllers
                 });
             }
 
+            if (! await _quizRepo.CheckIfTitleAvailable(request.Title))
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Title not available." }
+                });
+            }
+
             var quiz = new Quiz()
             {
                 AuthorId = userId,
@@ -271,7 +281,23 @@ namespace QuizuApi.Controllers
                 return Forbid();
             }
 
-            quiz.Title = request.Title;
+            if (request.Title != quiz.Title)
+            {
+                if (await _quizRepo.CheckIfTitleAvailable(request.Title))
+                {
+                    quiz.Title = request.Title;
+                }
+                else
+                {
+                    return BadRequest(new ApiResponse()
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        IsSuccess = false,
+                        ErrorMessages = { "Title not available." }
+                    });
+                }
+            }
+
             quiz.Description = request.Description;
             quiz.About = request.About;
 

@@ -26,6 +26,10 @@ namespace QuizuApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Quiz>()
+                .HasIndex(q => q.Title)
+                .IsUnique(true);
+
             base.OnModelCreating(modelBuilder);
         }
 
