@@ -220,5 +220,80 @@ namespace QuizuApi.Controllers
                 IsSuccess = true,
             });
         }
+
+        [HttpPut("{id}")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApiResponse>> UpdateQuiz(string id, [FromBody]QuizUpdateRequestDTO request)
+        {
+            var userId = _tokenReader.RetrieveUserIdFromRequest(Request);
+
+            if (userId is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid user id." }
+                });
+            }
+
+            bool outcome = Guid.TryParseExact(id, "D", out Guid quizId);
+
+            if (!outcome)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid id." }
+                });
+            }
+
+            var quiz = await _quizRepo.GetAsync(q => q.Id == quizId);
+
+            if (quiz is null)
+            {
+                return NotFound(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    IsSuccess = false,
+                    ErrorMessages = { "Could not found quiz with the specified id." }
+                });
+            }
+
+            if (quiz.AuthorId != userId)
+            {
+                return Forbid();
+            }
+
+            quiz.Title = request.Title;
+            quiz.Description = request.Description;
+            quiz.About = request.About;
+
+            try
+            {
+                await _quizRepo.UpdateAsync(quiz);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Something went wrong." }
+                });
+            }
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true
+            });
+        }
     }
 }

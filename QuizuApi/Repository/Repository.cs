@@ -30,6 +30,12 @@ namespace QuizuApi.Repository
             await SaveAsync();
         }
 
+        public async Task UpdateAsync(T entity)
+        {
+            dbSet.Update(entity);
+            await SaveAsync();
+        }
+
         public async Task<PageResultDTO<T>> GetPageAsync(int pageNumber,
                                                     int pageSize,
                                                     Expression<Func<T, bool>>? filter = null,

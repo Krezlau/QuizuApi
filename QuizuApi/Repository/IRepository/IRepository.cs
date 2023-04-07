@@ -15,6 +15,7 @@ namespace QuizuApi.Repository.IRepository
                           string? includeProperties = null);
         Task CreateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task UpdateAsync(T entity);
         Task SaveAsync();
     }
 }
