@@ -8,6 +8,7 @@ using QuizuApi.Models.DTOs;
 using QuizuApi.Repository.IRepository;
 using QuizuApi.Services;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace QuizuApi.Controllers
 {
@@ -125,7 +126,7 @@ namespace QuizuApi.Controllers
                 });
             }
 
-            if (! await _quizRepo.CheckIfTitleAvailable(request.Title))
+            if (!await _quizRepo.CheckIfTitleAvailable(request.Title))
             {
                 return BadRequest(new ApiResponse()
                 {
@@ -238,7 +239,7 @@ namespace QuizuApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ApiResponse>> UpdateQuiz(string id, [FromBody]QuizUpdateRequestDTO request)
+        public async Task<ActionResult<ApiResponse>> UpdateQuiz(string id, [FromBody] QuizUpdateRequestDTO request)
         {
             var userId = _tokenReader.RetrieveUserIdFromRequest(Request);
 
@@ -321,5 +322,28 @@ namespace QuizuApi.Controllers
                 IsSuccess = true
             });
         }
+
+        [HttpGet("available")]
+        public async Task<ActionResult<ApiResponse>> CheckTitleAvailability([FromQuery] string title)
+        {
+            if (title is null || title.Length > Constraints.TitleLengthMax || title.Length < Constraints.TitleLengthMin)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid title." }
+                });
+            }
+
+            var outcome = await _quizRepo.CheckIfTitleAvailable(title);
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
+                Result = outcome
+            });
+        } 
     }
 }
