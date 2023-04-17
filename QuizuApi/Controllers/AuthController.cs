@@ -51,6 +51,7 @@ namespace QuizuApi.Controllers
             options.HttpOnly = true;
             options.Secure = true;
             options.Expires = DateTime.Now.AddYears(10);
+            options.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
 
             Response.Cookies.Append("refreshToken", loginResponse.refreshToken, options);
 
