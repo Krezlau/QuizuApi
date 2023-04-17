@@ -1,8 +1,8 @@
 ﻿using Azure;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
-using QuizuApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using QuizuApi.Models.Database;
 
 namespace QuizuApi.Data
 {
@@ -22,9 +22,14 @@ namespace QuizuApi.Data
         public DbSet<UserAnswer> UserAnswers { get; set; }
         public DbSet<UserFollow> UserFollows { get; set; }
         public DbSet<UserSettings> UserSettings { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Quiz>()
+                .HasIndex(q => q.Title)
+                .IsUnique(true);
+
             base.OnModelCreating(modelBuilder);
         }
 

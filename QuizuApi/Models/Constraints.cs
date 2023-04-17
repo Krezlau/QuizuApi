@@ -19,5 +19,6 @@
         public const int TagsListLengthMax = 5;
         public const int CommentLengthMin = 1;
         public const int CommentLengthMax = 1000;
+        public const int RefreshTokenLength = 255;
     }
 }

@@ -1,16 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
-    public class UserSettings : AuditModel
+    public class QuizPlay : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public virtual User User { get; set; }
         [ForeignKey(nameof(UserId))]
         public required string UserId { get; set; }
-        public required bool DarkMode { get; set; }
-        public required bool ShowEmail { get; set; }
-        public required bool ShowSurname { get; set; }
+        public virtual Quiz Quiz { get; set; }
+        [ForeignKey(nameof(QuizId))]
+        public required Guid QuizId { get; set; }
+        public virtual List<UserAnswer> Answers { get; set; }
     }
 }

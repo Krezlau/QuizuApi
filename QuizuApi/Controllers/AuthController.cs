@@ -1,9 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using QuizuApi.Data;
+using QuizuApi.Exceptions;
 using QuizuApi.Models;
+using QuizuApi.Models.DTOs;
+using QuizuApi.Repository.IRepository;
+using QuizuApi.Services;
+using System.Net;
 
 namespace QuizuApi.Controllers
 {
@@ -11,85 +18,177 @@ namespace QuizuApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
-        private readonly QuizuApiDbContext _context;
+        private readonly IAuthRepository _authRepo;
+        private readonly IAccessTokenReaderService _tokenService;
 
-        public AuthController(UserManager<User> userManager, QuizuApiDbContext context)
+        public AuthController(IAuthRepository userRepository, IAccessTokenReaderService tokenService)
         {
-            _userManager = userManager;
-            _context = context;
+            _authRepo = userRepository;
+            _tokenService = tokenService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Temp()
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequestDTO request)
         {
-            var user = new User
+            (string accessToken, string userId, string refreshToken) loginResponse;
+            try
             {
-                UserName = "Krezlau",
-                Email = "email1@e.pl",
-                JoinedAt = DateTime.Now,
-                Name = "imie",
-                Surname = "nazwisko",
-                Location = "Poland"
-            };
-            await _userManager.CreateAsync(user, "Cebula123!@#");
-
-            var user2 = new User
+                loginResponse = await _authRepo.LoginUserAsync(request);
+            }
+            catch (AuthException e)
             {
-                UserName = "userOne",
-                Email = "email2@e.pl",
-                JoinedAt = DateTime.Now,
-                Name = "imie",
-                Surname = "nazwisko",
-                Location = "Poland"
-            };
-            await _userManager.CreateAsync(user2, "Cebula123!@#");
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { e.Message }
+                });
+            }
 
-            var user3 = new User
+            var options = new CookieOptions();
+            options.HttpOnly = true;
+            options.Secure = true;
+            options.Expires = DateTime.Now.AddYears(10);
+
+            Response.Cookies.Append("refreshToken", loginResponse.refreshToken, options);
+
+            return Ok(new ApiResponse()
             {
-                UserName = "userTwo",
-                Email = "email3@e.pl",
-                JoinedAt = DateTime.Now,
-                Name = "imie",
-                Surname = "nazwisko",
-                Location = "Poland"
-            };
-            await _userManager.CreateAsync(user3, "Cebula123!@#");
-
-            user.Followers.Add(user2);
-            user.Followers.Add(user3);
-            user.Following.Add(user2);
-
-            _context.UserFollows.Add(new UserFollow()
-            {
-                UserFollowedId = user.Id,
-                UserFollowingId = user2.Id
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
+                Result = new LoginResponseDTO() 
+                {
+                    AccessToken = loginResponse.accessToken,
+                    UserId = loginResponse.userId
+                }
             });
-            _context.UserFollows.Add(new UserFollow()
-            {
-                UserFollowedId = user.Id,
-                UserFollowingId = user3.Id
-            });
-            _context.UserFollows.Add(new UserFollow()
-            {
-                UserFollowedId = user2.Id,
-                UserFollowingId = user.Id,
-            });
-
-            _context.Update(user);
-            _context.SaveChanges();
-
-            return Ok();
         }
 
-        [HttpGet("xd")]
-        public async Task<IActionResult> Gettt()
+        [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequestDTO request)
         {
-            var users = _context.Users.Where(x => x.Id != "").Include("Followers").Include("Following").ToList();
+            bool ifUserNameUnique = await _authRepo.IsUniqueUserAsync(request.Username);
+            if (!ifUserNameUnique)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Username already taken." }
+                });
+            }
 
-            return Ok(users);
-    }
-    }
+            try
+            {
+                var user = await _authRepo.RegisterUserAsync(request);
+                return Ok(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    IsSuccess = true,
+                    Result = user
+                });
+            }
+            catch (AuthException e)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = e.Message.Split("\r\n").ToList()
+                });
+            }
 
-    
+        }
+        [HttpPost("refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> Refresh([FromBody] RefreshRequestDTO request)
+        {
+            string? refreshToken = Request.Cookies["refreshToken"];
+
+            if (refreshToken is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "No refresh token." }
+                });
+            }
+
+            try
+            {
+                string token = await _authRepo.RefreshAsync(request.AccessToken, refreshToken);
+                return Ok(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    IsSuccess = true,
+                    Result = token
+                });
+            }
+            catch (AuthException e)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { e.Message }
+                });
+            }
+        }
+
+        [HttpPost("change-password")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<ApiResponse>> ChangePassword([FromBody] ChangePasswordRequestDTO request)
+        {
+            string? userId = _tokenService.RetrieveUserIdFromRequest(Request);
+
+            if (userId is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid access token." }
+                });
+            }
+
+            bool outcome;
+            try
+            {
+                outcome = await _authRepo.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
+            }
+            catch (AuthException e)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = e.Message.Split("\r\n").ToList()
+                });
+            }
+            if (!outcome)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid access token" }
+                });
+            }
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
+                Result = "Successfully changed the password."
+            });
+        }
+    }
 }

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuizuApi.Models
+namespace QuizuApi.Models.Database
 {
-    public class QuizPlay : AuditModel
+    public class QuizLike : AuditModel
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
@@ -12,6 +12,5 @@ namespace QuizuApi.Models
         public virtual Quiz Quiz { get; set; }
         [ForeignKey(nameof(QuizId))]
         public required Guid QuizId { get; set; }
-        public virtual List<UserAnswer> Answers { get; set; }
     }
 }

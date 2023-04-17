@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizuApi.Data;
 
@@ -11,9 +12,11 @@ using QuizuApi.Data;
 namespace QuizuApi.Migrations
 {
     [DbContext(typeof(QuizuApiDbContext))]
-    partial class QuizuApiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230402161346_RefreshTokens")]
+    partial class RefreshTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,7 +173,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("QuizTag");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Answer", b =>
+            modelBuilder.Entity("QuizuApi.Models.Answer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,7 +203,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Question", b =>
+            modelBuilder.Entity("QuizuApi.Models.Question", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -227,7 +230,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Quiz", b =>
+            modelBuilder.Entity("QuizuApi.Models.Quiz", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -260,13 +263,10 @@ namespace QuizuApi.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("Title")
-                        .IsUnique();
-
                     b.ToTable("Quizzes");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizComment", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizComment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -299,7 +299,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("QuizComments");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizLike", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizLike", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -327,7 +327,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("QuizLikes");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizPlay", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizPlay", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -355,7 +355,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("QuizPlays");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizSettings", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizSettings", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -387,7 +387,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("QuizSettings");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.RefreshToken", b =>
+            modelBuilder.Entity("QuizuApi.Models.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -419,7 +419,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Tag", b =>
+            modelBuilder.Entity("QuizuApi.Models.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -441,7 +441,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.User", b =>
+            modelBuilder.Entity("QuizuApi.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -528,7 +528,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserAnswer", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserAnswer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -563,7 +563,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("UserAnswers");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserFollow", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserFollow", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -592,7 +592,7 @@ namespace QuizuApi.Migrations
                     b.ToTable("UserFollows");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserSettings", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserSettings", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -651,7 +651,7 @@ namespace QuizuApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -660,7 +660,7 @@ namespace QuizuApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -675,7 +675,7 @@ namespace QuizuApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -684,7 +684,7 @@ namespace QuizuApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -693,22 +693,22 @@ namespace QuizuApi.Migrations
 
             modelBuilder.Entity("QuizTag", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Quiz", null)
+                    b.HasOne("QuizuApi.Models.Quiz", null)
                         .WithMany()
                         .HasForeignKey("QuizzesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.Tag", null)
+                    b.HasOne("QuizuApi.Models.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Answer", b =>
+            modelBuilder.Entity("QuizuApi.Models.Answer", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Question", "Question")
+                    b.HasOne("QuizuApi.Models.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -717,9 +717,9 @@ namespace QuizuApi.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Question", b =>
+            modelBuilder.Entity("QuizuApi.Models.Question", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Quiz", "Quiz")
+                    b.HasOne("QuizuApi.Models.Quiz", "Quiz")
                         .WithMany("Questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -728,9 +728,9 @@ namespace QuizuApi.Migrations
                     b.Navigation("Quiz");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Quiz", b =>
+            modelBuilder.Entity("QuizuApi.Models.Quiz", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", "Author")
+                    b.HasOne("QuizuApi.Models.User", "Author")
                         .WithMany("Quizzes")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -739,15 +739,15 @@ namespace QuizuApi.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizComment", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizComment", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", "Author")
+                    b.HasOne("QuizuApi.Models.User", "Author")
                         .WithMany("QuizComments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.Quiz", "Quiz")
+                    b.HasOne("QuizuApi.Models.Quiz", "Quiz")
                         .WithMany("Comments")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -758,15 +758,15 @@ namespace QuizuApi.Migrations
                     b.Navigation("Quiz");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizLike", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizLike", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Quiz", "Quiz")
+                    b.HasOne("QuizuApi.Models.Quiz", "Quiz")
                         .WithMany("Likes")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.User", "User")
+                    b.HasOne("QuizuApi.Models.User", "User")
                         .WithMany("QuizLikes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -777,15 +777,15 @@ namespace QuizuApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizPlay", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizPlay", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Quiz", "Quiz")
+                    b.HasOne("QuizuApi.Models.Quiz", "Quiz")
                         .WithMany("Plays")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.User", "User")
+                    b.HasOne("QuizuApi.Models.User", "User")
                         .WithMany("QuizPlays")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -796,43 +796,43 @@ namespace QuizuApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizSettings", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizSettings", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Quiz", "Quiz")
+                    b.HasOne("QuizuApi.Models.Quiz", "Quiz")
                         .WithOne("Settings")
-                        .HasForeignKey("QuizuApi.Models.Database.QuizSettings", "QuizId")
+                        .HasForeignKey("QuizuApi.Models.QuizSettings", "QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Quiz");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.RefreshToken", b =>
+            modelBuilder.Entity("QuizuApi.Models.RefreshToken", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", "User")
+                    b.HasOne("QuizuApi.Models.User", "User")
                         .WithOne("RefreshToken")
-                        .HasForeignKey("QuizuApi.Models.Database.RefreshToken", "UserId")
+                        .HasForeignKey("QuizuApi.Models.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserAnswer", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserAnswer", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.Answer", "AnswerGiven")
+                    b.HasOne("QuizuApi.Models.Answer", "AnswerGiven")
                         .WithMany()
                         .HasForeignKey("AnswerGivenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.Question", "Question")
+                    b.HasOne("QuizuApi.Models.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.QuizPlay", null)
+                    b.HasOne("QuizuApi.Models.QuizPlay", null)
                         .WithMany("Answers")
                         .HasForeignKey("QuizPlayId");
 
@@ -841,15 +841,15 @@ namespace QuizuApi.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserFollow", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserFollow", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", "UserFollowed")
+                    b.HasOne("QuizuApi.Models.User", "UserFollowed")
                         .WithMany()
                         .HasForeignKey("UserFollowedId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.User", "UserFollowing")
+                    b.HasOne("QuizuApi.Models.User", "UserFollowing")
                         .WithMany()
                         .HasForeignKey("UserFollowingId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -860,11 +860,11 @@ namespace QuizuApi.Migrations
                     b.Navigation("UserFollowing");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.UserSettings", b =>
+            modelBuilder.Entity("QuizuApi.Models.UserSettings", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", "User")
+                    b.HasOne("QuizuApi.Models.User", "User")
                         .WithOne("Settings")
-                        .HasForeignKey("QuizuApi.Models.Database.UserSettings", "UserId")
+                        .HasForeignKey("QuizuApi.Models.UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -873,25 +873,25 @@ namespace QuizuApi.Migrations
 
             modelBuilder.Entity("UserUser", b =>
                 {
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("FollowersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizuApi.Models.Database.User", null)
+                    b.HasOne("QuizuApi.Models.User", null)
                         .WithMany()
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Question", b =>
+            modelBuilder.Entity("QuizuApi.Models.Question", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.Quiz", b =>
+            modelBuilder.Entity("QuizuApi.Models.Quiz", b =>
                 {
                     b.Navigation("Comments");
 
@@ -905,12 +905,12 @@ namespace QuizuApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.QuizPlay", b =>
+            modelBuilder.Entity("QuizuApi.Models.QuizPlay", b =>
                 {
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("QuizuApi.Models.Database.User", b =>
+            modelBuilder.Entity("QuizuApi.Models.User", b =>
                 {
                     b.Navigation("QuizComments");
 
