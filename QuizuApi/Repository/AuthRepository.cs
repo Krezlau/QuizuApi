@@ -41,13 +41,13 @@ namespace QuizuApi.Repository
             return user is null;
         }
 
-        public async Task<(string accessToken, string userId, string refreshToken)> LoginUserAsync(LoginRequestDTO loginRequestDTO)
+        public async Task<(string accessToken, string userId, string refreshToken, string username)> LoginUserAsync(LoginRequestDTO loginRequestDTO)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginRequestDTO.Email);
 
             if (user is null)
             {
-                throw new AuthException("Incorrect username.");
+                throw new AuthException("Incorrect email.");
             }
 
             bool isValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
@@ -60,7 +60,7 @@ namespace QuizuApi.Repository
             string token = await _accessTokenService.GenerateJwtTokenAsync(user.Id);
             string refreshToken = await _refreshTokenService.RetrieveOrGenerateRefreshTokenAsync(user.Id);
 
-            return (token, user.Id, refreshToken);
+            return (token, user.Id, refreshToken, user.UserName);
         }
 
         public async Task<bool> RegisterUserAsync(RegisterRequestDTO registerRequestDTO)
