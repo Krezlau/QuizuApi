@@ -32,7 +32,7 @@ namespace QuizuApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequestDTO request)
         {
-            (string accessToken, string userId, string refreshToken) loginResponse;
+            (string accessToken, string userId, string refreshToken, string username) loginResponse;
             try
             {
                 loginResponse = await _authRepo.LoginUserAsync(request);
@@ -51,6 +51,7 @@ namespace QuizuApi.Controllers
             options.HttpOnly = true;
             options.Secure = true;
             options.Expires = DateTime.Now.AddYears(10);
+            options.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
 
             Response.Cookies.Append("refreshToken", loginResponse.refreshToken, options);
 
@@ -61,7 +62,8 @@ namespace QuizuApi.Controllers
                 Result = new LoginResponseDTO() 
                 {
                     AccessToken = loginResponse.accessToken,
-                    UserId = loginResponse.userId
+                    UserId = loginResponse.userId,
+                    Username = loginResponse.username
                 }
             });
         }

@@ -7,8 +7,13 @@ namespace QuizuApi.Models.DTOs
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
         public required string Username { get; set; }
+        [EmailAddress]
         public required string Email { get; set; }
+        [MinLength(Constraints.PasswordLengthMin)]
+        [MaxLength(Constraints.PasswordLengthMax)]
         public required string Password { get; set; }
+        [MinLength(Constraints.PasswordLengthMin)]
+        [MaxLength(Constraints.PasswordLengthMax)]
         public required string RepeatPassword { get; set; }
         [MinLength(Constraints.LabelLengthMin)]
         [MaxLength(Constraints.LabelLengthMax)]
