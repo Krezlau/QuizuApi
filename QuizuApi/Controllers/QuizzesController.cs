@@ -159,6 +159,7 @@ namespace QuizuApi.Controllers
             {
                 StatusCode = HttpStatusCode.Created,
                 IsSuccess = true,
+                Result = quiz.Id
             });
         }
 
@@ -324,6 +325,8 @@ namespace QuizuApi.Controllers
         }
 
         [HttpGet("available")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> CheckTitleAvailability([FromQuery] string title)
         {
             if (title is null || title.Length > Constraints.TitleLengthMax || title.Length < Constraints.TitleLengthMin)
