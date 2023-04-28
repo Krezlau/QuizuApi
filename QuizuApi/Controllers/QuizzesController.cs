@@ -52,6 +52,33 @@ namespace QuizuApi.Controllers
             });
         }
 
+        [HttpGet("byUserId/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> GetQuizzesByUserId(string userId, [FromQuery] PageRequestParametersDTO request)
+        {
+            var requestUserId = _tokenReader.RetrieveUserIdFromRequest(Request);
+            var quizResults = await _quizRepo.GetPageAsync(request.PageNumber, request.PageSize, q => q.AuthorId == userId, includeProperties: "Tags,Author");
+            var retResult = new List<QuizDTO>();
+            foreach (var quiz in quizResults.QueryResult)
+            {
+                retResult.Add(new QuizDTO(quiz, await _quizRepo.FetchActivityInfoAsync(quiz.Id, requestUserId)));
+            }
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
+                Result = new PageResultDTO<QuizDTO>()
+                {
+                    PageCount = quizResults.PageCount,
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    QueryResult = retResult
+                }
+            });
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
