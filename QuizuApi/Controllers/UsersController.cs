@@ -150,5 +150,80 @@ namespace QuizuApi.Controllers
                 IsSuccess = true,
             });
         }
+
+        [HttpPut("{userId}")]
+        public async Task<ActionResult<ApiResponse>> UpdateUserProfile(string userId, [FromBody] UserProfileUpdateDTO request)
+        {
+            var requestUserId = _tokenReader.RetrieveUserIdFromRequest(Request);
+
+            if (requestUserId is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid user id." }
+                });
+            }
+
+            var user = await _userRepository.GetAsync(u => u.Id == userId);
+
+            if (user is null)
+            {
+                return NotFound(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.NotFound,
+                    IsSuccess = false,
+                    ErrorMessages = { "Could not found quiz with the specified id." }
+                });
+            }
+
+            if (user.Id != requestUserId)
+            {
+                return Forbid();
+            }
+
+            if (request.Username != user.UserName)
+            {
+                if (await _userRepository.CheckIfUsernameAvailable(request.Username))
+                {
+                    user.UserName = request.Username;
+                }
+                else
+                {
+                    return BadRequest(new ApiResponse()
+                    {
+                        StatusCode = HttpStatusCode.BadRequest,
+                        IsSuccess = false,
+                        ErrorMessages = { "Username not available." }
+                    });
+                }
+            }
+
+            user.About = request.About is not null ? request.About : user.About;
+            user.Name = request.Name is not null ? request.Name : user.Name;
+            user.Surname = request.Surname is not null ? request.Surname : user.Surname;
+            user.Location = request.Location is not null ? request.Location : user.Location;
+
+            try
+            {
+                await _userRepository.UpdateAsync(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Something went wrong." }
+                });
+            }
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true
+            });
+        }
     }
 }
