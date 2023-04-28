@@ -20,6 +20,7 @@ builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IAccessTokenCreatorService, AccessTokenCreatorService>();
 builder.Services.AddScoped<IAccessTokenReaderService, AccessTokenReaderService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(o =>
