@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QuizuApi.Models;
@@ -88,6 +89,65 @@ namespace QuizuApi.Controllers
                 StatusCode = HttpStatusCode.OK,
                 IsSuccess = true,
                 Result = outcome
+            });
+        }
+
+
+        [HttpDelete("{userId}")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<ApiResponse>> DeleteUserAccount(string userId)
+        {
+            var requestUserId = _tokenReader.RetrieveUserIdFromRequest(Request);
+
+            if (requestUserId is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid user id." }
+                });
+            }
+
+            var user = await _userRepository.GetAsync(u => u.Id == userId);
+
+            if (user is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid id." }
+                });
+            }
+
+            if (user.Id != requestUserId)
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                await _userRepository.DeleteAsync(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Something went wrong." }
+                });
+            }
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
             });
         }
     }

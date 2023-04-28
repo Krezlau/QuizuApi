@@ -347,6 +347,6 @@ namespace QuizuApi.Controllers
                 IsSuccess = true,
                 Result = outcome
             });
-        } 
+        }
     }
 }

@@ -25,5 +25,29 @@ namespace QuizuApi.Repository
         {
             return await _context.Quizzes.CountAsync(q => q.AuthorId == userId);
         }
+
+        public override async Task DeleteAsync(User entity)
+        {
+            _context.UserFollows.RemoveRange(await _context.UserFollows.Where(x => x.UserFollowedId == entity.Id).ToArrayAsync());
+            _context.UserFollows.RemoveRange(await _context.UserFollows.Where(x => x.UserFollowingId == entity.Id).ToArrayAsync());
+            var quizzes = await _context.Quizzes.Where(q => q.AuthorId == entity.Id).ToArrayAsync();
+            foreach (var quiz in quizzes)
+            {
+                // delete via IQuizRepository?
+            }
+
+            var plays = await _context.QuizPlays.Where(qp => qp.UserId == entity.Id).ToArrayAsync();
+            foreach (var qp in plays)
+            {
+                // delete
+            }
+
+            _context.QuizLikes.RemoveRange(await _context.QuizLikes.Where(x => x.UserId == entity.Id).ToArrayAsync());
+            _context.QuizComments.RemoveRange(await _context.QuizComments.Where(x => x.AuthorId == entity.Id).ToArrayAsync());
+
+            await _context.SaveChangesAsync();
+            
+            await base.DeleteAsync(entity);
+        }
     }
 }
