@@ -9,6 +9,7 @@ namespace QuizuApi.Models.DTOs
         public UserProfileDTO(User user, int quizzesCount, int followersCount)
         {
             Id = user.Id;
+            Username = user.UserName is not null ? user.UserName : "username";
             Name = user.Name;
             Email = user.Email is null ? "email invalid" : user.Email;
             Surname = user.Surname;
@@ -20,6 +21,7 @@ namespace QuizuApi.Models.DTOs
         }
 
         public required string Id { get; set; }
+        public required string Username { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
         public required string Surname { get; set; }

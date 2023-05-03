@@ -7,8 +7,11 @@ namespace QuizuApi.Repository
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
-        public UserRepository(QuizuApiDbContext context) : base(context)
+        private readonly IQuizRepository _quizRepository;
+
+        public UserRepository(QuizuApiDbContext context, IQuizRepository quizRepository) : base(context)
         {
+            _quizRepository = quizRepository;
         }
 
         public async Task<bool> CheckIfUsernameAvailable(string username)
@@ -33,13 +36,14 @@ namespace QuizuApi.Repository
             var quizzes = await _context.Quizzes.Where(q => q.AuthorId == entity.Id).ToArrayAsync();
             foreach (var quiz in quizzes)
             {
-                // delete via IQuizRepository?
+                await _quizRepository.DeleteAsync(quiz);
             }
 
             var plays = await _context.QuizPlays.Where(qp => qp.UserId == entity.Id).ToArrayAsync();
             foreach (var qp in plays)
             {
-                // delete
+                // TODO
+                // delete via quizplays 
             }
 
             _context.QuizLikes.RemoveRange(await _context.QuizLikes.Where(x => x.UserId == entity.Id).ToArrayAsync());

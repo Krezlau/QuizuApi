@@ -54,7 +54,7 @@ namespace QuizuApi.Repository
                     query = query.Include(property);
                 }
             }
-            var pageCount = await query.CountAsync();
+            var pageCount =  (int)Math.Ceiling((double)await query.CountAsync() / pageSize);
 
             var result = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
