@@ -20,6 +20,7 @@ builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IAccessTokenCreatorService, AccessTokenCreatorService>();
 builder.Services.AddScoped<IAccessTokenReaderService, AccessTokenReaderService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(o =>
@@ -50,7 +51,8 @@ builder.Services.AddAuthentication(auth =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("key").Value)),
         ValidateIssuer = false, // for dev
         ValidateAudience = false, // for dev
-        ValidateLifetime = true
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -105,7 +107,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.UseAuthentication();
