@@ -7,7 +7,7 @@
         public const int AboutLengthMax = 1000;
         public const int AnswerLengthMin = 1;
         public const int AnswerLengthMax = 255;
-        public const int QuestionLengthMin = 5;
+        public const int QuestionLengthMin = 1;
         public const int QuestionLengthMax = 255;
         public const int AnswerListLengthMin = 1;
         public const int AnswerListLengthMax = 4;
