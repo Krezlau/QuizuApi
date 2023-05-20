@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'quizuapi'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_691B74E887534C299D75D2FAD673DC5A }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_25FEC43CB18B49729D6115684A78AAB5 }}
           package: .
