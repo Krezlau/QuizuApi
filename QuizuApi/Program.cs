@@ -51,7 +51,7 @@ builder.Services.AddAuthentication(auth =>
     jwt.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("key").Value)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("Key").Value)),
         ValidateIssuer = false, // for dev
         ValidateAudience = false, // for dev
         ValidateLifetime = true,
@@ -106,7 +106,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "StoryHubAPI");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "QuizuApi");
     options.RoutePrefix = String.Empty;
 });
 

@@ -15,7 +15,7 @@ namespace QuizuApi.Services
         public AccessTokenCreatorService(UserManager<User> userManager, IConfiguration config)
         {
             _userManager = userManager;
-            secretKey = Encoding.UTF8.GetBytes(config.GetSection("key").Value);
+            secretKey = Encoding.UTF8.GetBytes(config.GetSection("Key").Value);
         }
 
         public async Task<string> GenerateJwtTokenAsync(string userId)
