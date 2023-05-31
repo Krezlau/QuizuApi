@@ -24,6 +24,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuestionAnswerRepository, QuestionAnswerRepository>();
 builder.Services.AddScoped<IRepository<QuizLike>, Repository<QuizLike>>();
 builder.Services.AddScoped<IRepository<QuizComment>, Repository<QuizComment>>();
+builder.Services.AddScoped<IRepository<QuizSettings>, Repository<QuizSettings>>();
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(o =>

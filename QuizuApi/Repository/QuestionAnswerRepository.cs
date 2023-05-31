@@ -86,5 +86,30 @@ namespace QuizuApi.Repository
             _context.Answers.Remove(answer);
             await SaveAsync();
         }
+
+        public async Task<List<Question>> GetRandomQuestionsForPlayAsync(Guid quizId, int questionsPerPlay)
+        {
+            List<Question> questions;
+            if (questionsPerPlay == -1)
+            {
+                questions = await _context.Questions.Where(q => q.QuizId == quizId)
+                                                    .Include("Answers")
+                                                    .ToListAsync();
+            }
+            else
+            {
+                questions = await _context.Questions.Where(q => q.QuizId == quizId)
+                                                    .Include("Answers")
+                                                    .OrderBy(q => Guid.NewGuid())
+                                                    .Take(questionsPerPlay)
+                                                    .ToListAsync();
+            }
+            // Shuffle answers
+            foreach (var question in questions)
+            {
+                question.Answers = question.Answers.OrderBy(a => Guid.NewGuid()).ToList();
+            }
+            return questions;
+        }
     }
 }
