@@ -54,6 +54,8 @@ namespace QuizuApi.Controllers
                 });
             }
 
+            var quizName = quiz.Title;
+
             // get quiz settings
             QuizSettings? quizSettings = await _settingsRepo.GetAsync(s => s.QuizId == quizGuid);
 
@@ -80,6 +82,7 @@ namespace QuizuApi.Controllers
                 IsSuccess = true,
                 Result = new PlayQuestionsDTO()
                 {
+                    QuizName = quizName,
                     Questions = questions.Select(q => new QuestionDTO(q)).ToList(),
                     AnswerTimeS = answertime_s,
                     QuestionsCount = questionsPerPlay
