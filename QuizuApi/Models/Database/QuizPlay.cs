@@ -13,5 +13,6 @@ namespace QuizuApi.Models.Database
         [ForeignKey(nameof(QuizId))]
         public required Guid QuizId { get; set; }
         public virtual List<UserAnswer> Answers { get; set; }
+        public required int Score { get; set; }
     }
 }

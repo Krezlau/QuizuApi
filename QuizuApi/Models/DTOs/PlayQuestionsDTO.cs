@@ -2,6 +2,7 @@
 {
     public class PlayQuestionsDTO
     {
+        public required string QuizId { get; set; }
         public required string QuizName { get; set; }
         public required int QuestionsCount { get; set; }
         public required int AnswerTimeS { get; set; }
