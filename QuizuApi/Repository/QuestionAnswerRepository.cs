@@ -93,21 +93,21 @@ namespace QuizuApi.Repository
             if (questionsPerPlay == -1)
             {
                 questions = await _context.Questions.Where(q => q.QuizId == quizId)
-                                                    .Include("Answers")
+                                                    .OrderBy(q => Guid.NewGuid())
                                                     .ToListAsync();
             }
             else
             {
                 questions = await _context.Questions.Where(q => q.QuizId == quizId)
-                                                    .Include("Answers")
                                                     .OrderBy(q => Guid.NewGuid())
                                                     .Take(questionsPerPlay)
                                                     .ToListAsync();
             }
+
             // Shuffle answers
             foreach (var question in questions)
             {
-                question.Answers = question.Answers.OrderBy(a => Guid.NewGuid()).ToList();
+                question.Answers = await _context.Answers.Where(a => a.QuestionId == question.Id).OrderBy(a => Guid.NewGuid()).ToListAsync();
             }
             return questions;
         }

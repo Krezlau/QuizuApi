@@ -82,10 +82,11 @@ namespace QuizuApi.Repository
                 throw new QuizPlayException("Quiz does not exist.");
             }
 
-            int all = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).CountAsync();
+            double all = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).CountAsync();
             if (all == 0) return 100;
+            double worse = await _context.QuizPlays.Where(qp => qp.QuizId == quizId && qp.Score <= score).CountAsync();
 
-            return await _context.QuizPlays.Where(qp => qp.QuizId == quizId && qp.Score <= score).CountAsync() / all * 100;
+            return (worse / all) * 100;
         }
 
         public async Task SavePlayAsync(string userId, Guid quizId, UserPlayResultDTO answers)
@@ -97,7 +98,21 @@ namespace QuizuApi.Repository
             }
             var userAns = new List<UserAnswer>();
             for (int i = 0; i < answers.AnswerIds.Count; i++)
-            {
+            {                
+                if (answers.AnswerIds[i] == "")
+                {
+                    bool outcome_q = Guid.TryParseExact(answers.QuestionIds[i], "D", out Guid qid);
+                    if (!outcome_q)
+                    {
+                        throw new QuizPlayException("Question doesn't exist.");
+                    }
+                    userAns.Add(new UserAnswer()
+                    {
+                        QuestionId = qid,
+                        TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i])
+                    });
+                    continue;
+                }
                 bool outcome = Guid.TryParseExact(answers.AnswerIds[i], "D", out Guid guid);
                 if (!outcome)
                 {
@@ -123,9 +138,7 @@ namespace QuizuApi.Repository
                     QuestionId = ans.QuestionId,
                     TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i])
                 });
-
             }
-
             var play = new QuizPlay()
             {
                 QuizId = quizId,

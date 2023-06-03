@@ -141,7 +141,7 @@ namespace QuizuApi.Controllers
                 });
             }
 
-            double percentage = -1;
+            double percentage;
             try
             {
                 percentage = await _playRepo.GetPercentageOfUsersYouBeatAsync(quizGuid, answers.Score);
