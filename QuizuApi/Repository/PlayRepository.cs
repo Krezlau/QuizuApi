@@ -57,7 +57,7 @@ namespace QuizuApi.Repository
             return (correctPercentage, avgTime);
         }
 
-        public async Task<(double avgScore, double avgTimeTaken)> GetAverageScoreForQuizAsync(Guid quizId)
+        public async Task<QuizPublicPlayStatsDTO> GetQuizPublicPlayStatsAsync(Guid quizId, int questionCount)
         {
             Quiz? quiz = await _context.Quizzes.Where(q => q.Id == quizId).FirstOrDefaultAsync();
 
@@ -66,11 +66,42 @@ namespace QuizuApi.Repository
                 throw new QuizPlayException("Quiz does not exist.");
             }
 
+            if (_context.QuizPlays.Any(qp => qp.QuizId == quizId) == false)
+            {
+                return new QuizPublicPlayStatsDTO
+                {
+                    AverageScore = 0,
+                    AverageTimeS = 0,
+                    TopScore = 0,
+                    TotalPlays = 0,
+                    PlotPoints = new List<BarPlotPointDTO>()
+                };
+            }
+
             double avgScore = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).AverageAsync(qp => qp.Score);
-            double avgTimeTaken = await _context.QuizPlays.Where(qp => qp.QuizId == quizId)
-                                                          .Include(qp => qp.Answers)
-                                                          .AverageAsync(qp => qp.Answers.Average(a => a.TimeTaken.TotalSeconds));
-            return (avgScore, avgTimeTaken);
+            var plays = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).Include(qp => qp.Answers).ToListAsync();
+            var timeTaken = plays.Select(p => p.Answers.Sum(a => a.TimeTaken.TotalSeconds)).ToList();
+            var avgTimeTaken = timeTaken.Average();
+            int topScore = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).MaxAsync(qp => qp.Score);
+            int totalPlays = await _context.QuizPlays.Where(qp => qp.QuizId == quizId).CountAsync();
+            
+            var plotPoints = new List<BarPlotPointDTO>();
+            // 10 points for bar plot
+            int step = questionCount*1000 / 10;
+            for (int i = 0; i < 10; i++)
+            {
+                int count = await _context.QuizPlays.Where(qp => qp.QuizId == quizId && qp.Score >= i * step && qp.Score < (i + 1) * step).CountAsync();
+                plotPoints.Add(new BarPlotPointDTO() { Score = i*step, Count = count});
+            }
+
+            return new QuizPublicPlayStatsDTO
+            {
+                AverageScore = avgScore,
+                AverageTimeS = avgTimeTaken,
+                TopScore = topScore,
+                TotalPlays = totalPlays,
+                PlotPoints = plotPoints
+            };
         }
 
         public async Task<double> GetPercentageOfUsersYouBeatAsync(Guid quizId, int score)

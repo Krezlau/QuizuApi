@@ -186,5 +186,49 @@ namespace QuizuApi.Controllers
                 Result = percentage
             });
         }
+
+        [HttpGet("stats/{quizId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> GetQuizPublicPlayStats(string quizId)
+        {
+            bool outcome = Guid.TryParseExact(quizId, "D", out Guid quizGuid);
+
+            if (!outcome)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid id." }
+                });
+            }
+
+            // check if quiz exists
+            Quiz? quiz = await _quizRepo.GetAsync(q => q.Id == quizGuid, includeProperties:"Questions");
+
+            if (quiz is null)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Quiz does not exist." }
+                });
+            }
+
+            QuizSettings? quizSettings = await _settingsRepo.GetAsync(s => s.QuizId == quizGuid);
+
+            var questionsPerPlay = quizSettings is null ? 10 : quizSettings.QuestionsPerPlay == -1 ? quiz.Questions.Count : quizSettings.QuestionsPerPlay;
+
+            var stats = await _playRepo.GetQuizPublicPlayStatsAsync(quizGuid, questionsPerPlay);
+
+            return Ok(new ApiResponse()
+            {
+                StatusCode = HttpStatusCode.OK,
+                IsSuccess = true,
+                Result = stats
+            });
+        }
     }
 }

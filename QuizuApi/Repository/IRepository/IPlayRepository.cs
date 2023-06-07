@@ -7,7 +7,7 @@ namespace QuizuApi.Repository.IRepository
     {
         Task SavePlayAsync(string userId, Guid quizId, UserPlayResultDTO answers);
         Task<double> GetPercentageOfUsersYouBeatAsync(Guid quizId, int score);
-        Task<(double avgScore, double avgTimeTaken)> GetAverageScoreForQuizAsync(Guid quizId);
+        Task<QuizPublicPlayStatsDTO> GetQuizPublicPlayStatsAsync(Guid quizId, int questionCount);
         Task<(double correctPercentage, double avgTimeTaken)> GetAverageScoreForQuestionAsync(Guid answerId);
     }
 }
