@@ -13,5 +13,6 @@ namespace QuizuApi.Repository.IRepository
         Task SaveAsync();
         Task DeleteAnswerAsync(Answer answer);
         Task CreateAnswerAsync(AnswerRequestDTO answer, Guid questionId);
+        Task<List<Question>> GetRandomQuestionsForPlayAsync(Guid quizId, int questionsPerPlay);
     }
 }

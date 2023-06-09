@@ -29,7 +29,19 @@ namespace QuizuApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse>> GetComments(string id, [FromQuery] PageRequestParametersDTO request)
         {
-            var commentsResults = await _commentRepo.GetPageAsync(request.PageNumber, request.PageSize, includeProperties: "Author");
+            bool outcome = Guid.TryParseExact(id, "D", out Guid quizId);
+
+            if (!outcome)
+            {
+                return BadRequest(new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Invalid id." }
+                });
+            }
+
+            var commentsResults = await _commentRepo.GetPageAsync(request.PageNumber, request.PageSize, (c) => c.QuizId == quizId , includeProperties: "Author");
 
             var retResult = commentsResults.QueryResult.Select(c => new QuizCommentDTO()
             {
@@ -79,6 +91,7 @@ namespace QuizuApi.Controllers
                 Content = request.Content,
                 AuthorId = userId,
                 QuizId = request.QuizId,
+                IsDeleted = false
             };
             try
             {

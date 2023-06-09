@@ -9,9 +9,9 @@ namespace QuizuApi.Models.Database
         public virtual Question Question { get; set; }
         [ForeignKey(nameof(QuestionId))]
         public required Guid QuestionId { get; set; }
-        public virtual Answer AnswerGiven { get; set; }
+        public virtual Answer? AnswerGiven { get; set; }
         [ForeignKey(nameof(AnswerGivenId))]
-        public required Guid AnswerGivenId { get; set; }
+        public Guid? AnswerGivenId { get; set; }
         public required TimeSpan TimeTaken { get; set; }
     }
 }

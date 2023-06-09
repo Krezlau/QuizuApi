@@ -80,7 +80,7 @@ namespace QuizuApi.Controllers
 
             try
             {
-                await _quizLikeRepository.CreateAsync(new QuizLike() { QuizId = quizGuid, UserId = requestUserId });
+                await _quizLikeRepository.CreateAsync(new QuizLike() { QuizId = quizGuid, UserId = requestUserId, IsDeleted = false });
                 return Ok(new ApiResponse() { StatusCode = HttpStatusCode.OK, IsSuccess = true});
             }
             catch (Exception ex)
