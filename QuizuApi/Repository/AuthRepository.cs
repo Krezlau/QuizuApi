@@ -72,7 +72,8 @@ namespace QuizuApi.Repository
                 JoinedAt = DateTime.Now,
                 Location = registerRequestDTO.Location,
                 Name = registerRequestDTO.Name,
-                Surname = registerRequestDTO.Surname
+                Surname = registerRequestDTO.Surname,
+                IsDeleted = false
             };
 
             var result = await _userManager.CreateAsync(user, registerRequestDTO.Password);

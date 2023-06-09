@@ -30,13 +30,15 @@ namespace QuizuApi.Repository
             {
                 Content = question.Content,
                 QuizId = quizGuid,
+                IsDeleted = false
             };
 
             List<Answer> answers = question.Answers.Select(a => new Answer()
             {
                 Content = a.Content,
                 IsCorrect = a.IsCorrect,
-                QuestionId = q.Id
+                QuestionId = q.Id,
+                IsDeleted = false
             }).ToList();
 
             q.Answers = answers;
@@ -48,19 +50,19 @@ namespace QuizuApi.Repository
 
         public async Task DeleteAsync(Question question)
         {
-            _context.Answers.RemoveRange(question.Answers);
-            _context.Questions.Remove(question);
+            question.IsDeleted = true;
+           _context.Questions.Update(question);
             await SaveAsync();
         }
 
         public async Task<List<Question>> GetAllAsync(Guid quizId)
         {
-            return await _context.Questions.Where(q => q.QuizId == quizId).Include("Answers").ToListAsync();
+            return await _context.Questions.Where(q => q.QuizId == quizId && q.IsDeleted == false).Include("Answers").ToListAsync();
         }
 
         public async Task<Question?> GetAsync(Guid questionId)
         {
-            return await _context.Questions.Where(q => q.Id == questionId).Include("Answers").FirstOrDefaultAsync();
+            return await _context.Questions.Where(q => q.Id == questionId && q.IsDeleted == false).Include("Answers").FirstOrDefaultAsync();
         }
 
         public async Task SaveAsync()
@@ -77,7 +79,7 @@ namespace QuizuApi.Repository
 
         public async Task CreateAnswerAsync(AnswerRequestDTO answer, Guid questionId)
         {
-            _context.Answers.Add(new Answer() { Content = answer.Content, IsCorrect = answer.IsCorrect, QuestionId = questionId});
+            _context.Answers.Add(new Answer() { Content = answer.Content, IsCorrect = answer.IsCorrect, QuestionId = questionId, IsDeleted = false });
             await SaveAsync();
         }
 
@@ -92,13 +94,13 @@ namespace QuizuApi.Repository
             List<Question> questions;
             if (questionsPerPlay == -1)
             {
-                questions = await _context.Questions.Where(q => q.QuizId == quizId)
+                questions = await _context.Questions.Where(q => q.QuizId == quizId && q.IsDeleted == false)
                                                     .OrderBy(q => Guid.NewGuid())
                                                     .ToListAsync();
             }
             else
             {
-                questions = await _context.Questions.Where(q => q.QuizId == quizId)
+                questions = await _context.Questions.Where(q => q.QuizId == quizId && q.IsDeleted == false)
                                                     .OrderBy(q => Guid.NewGuid())
                                                     .Take(questionsPerPlay)
                                                     .ToListAsync();

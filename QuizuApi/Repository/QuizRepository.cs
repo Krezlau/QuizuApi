@@ -16,9 +16,9 @@ namespace QuizuApi.Repository
         {
             var result = new QuizActivityDTO()
             {
-                LikesCount = await _context.QuizLikes.CountAsync(l => l.QuizId == quizId),
-                CommentsCount = await _context.QuizComments.CountAsync(c => c.QuizId == quizId),
-                PlaysCount = await _context.QuizPlays.CountAsync(p => p.QuizId == quizId)
+                LikesCount = await _context.QuizLikes.CountAsync(l => l.QuizId == quizId && l.IsDeleted == false),
+                CommentsCount = await _context.QuizComments.CountAsync(c => c.QuizId == quizId && c.IsDeleted == false),
+                PlaysCount = await _context.QuizPlays.CountAsync(p => p.QuizId == quizId && p.IsDeleted == false)
             };
 
             if (userId is not null)
@@ -43,6 +43,7 @@ namespace QuizuApi.Repository
                 AnswerTimeS = 10,
                 QuestionsPerPlay = -1, // all questions
                 QuizId = entity.Id,
+                IsDeleted = false
             });
             await _context.SaveChangesAsync();
         }
@@ -52,12 +53,19 @@ namespace QuizuApi.Repository
             var questions = await _context.Questions.Where(q => q.QuizId == entity.Id).ToArrayAsync();
             foreach (var q in questions)
             {
-                _context.Answers.RemoveRange(await _context.Answers.Where(a => a.QuestionId == q.Id).ToArrayAsync());
+                var answers = await _context.Answers.Where(a => a.QuestionId == q.Id).ToArrayAsync();
+                foreach (var a in answers)
+                {
+                    a.IsDeleted = true;
+                }
+                _context.Answers.UpdateRange(answers);
+                q.IsDeleted = true;
             }
-            _context.Questions.RemoveRange(questions);
-            _context.QuizLikes.RemoveRange(await _context.QuizLikes.Where(ql => ql.QuizId == entity.Id).ToArrayAsync());
-            _context.QuizComments.RemoveRange(await _context.QuizComments.Where(qc => qc.QuizId == entity.Id).ToArrayAsync());
-            _context.QuizPlays.RemoveRange(await _context.QuizPlays.Where(qp => qp.QuizId == entity.Id).ToArrayAsync());
+            _context.Questions.UpdateRange(questions);
+
+            //_context.QuizLikes.RemoveRange(await _context.QuizLikes.Where(ql => ql.QuizId == entity.Id).ToArrayAsync());
+            //_context.QuizComments.RemoveRange(await _context.QuizComments.Where(qc => qc.QuizId == entity.Id).ToArrayAsync());
+            //_context.QuizPlays.RemoveRange(await _context.QuizPlays.Where(qp => qp.QuizId == entity.Id).ToArrayAsync());
             await base.DeleteAsync(entity);
         }
     }

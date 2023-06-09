@@ -36,5 +36,6 @@ namespace QuizuApi.Models.Database
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public virtual List<QuizComment> QuizComments { get; set; }
         public virtual RefreshToken RefreshToken { get; set; }
+        public required bool IsDeleted { get; set; }
     }
 }

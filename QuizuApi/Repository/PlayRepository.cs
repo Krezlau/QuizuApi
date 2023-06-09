@@ -59,7 +59,7 @@ namespace QuizuApi.Repository
 
         public async Task<QuizPublicPlayStatsDTO> GetQuizPublicPlayStatsAsync(Guid quizId, int questionCount)
         {
-            Quiz? quiz = await _context.Quizzes.Where(q => q.Id == quizId).FirstOrDefaultAsync();
+            Quiz? quiz = await _context.Quizzes.Where(q => q.Id == quizId && q.IsDeleted == false).FirstOrDefaultAsync();
 
             if (quiz is null)
             {
@@ -106,7 +106,7 @@ namespace QuizuApi.Repository
 
         public async Task<double> GetPercentageOfUsersYouBeatAsync(Guid quizId, int score)
         {
-            Quiz? quiz = await _context.Quizzes.Where(q => q.Id == quizId).FirstOrDefaultAsync();
+            Quiz? quiz = await _context.Quizzes.Where(q => q.Id == quizId && q.IsDeleted == false).FirstOrDefaultAsync();
 
             if (quiz is null)
             {
@@ -140,7 +140,8 @@ namespace QuizuApi.Repository
                     userAns.Add(new UserAnswer()
                     {
                         QuestionId = qid,
-                        TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i])
+                        TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i]),
+                        IsDeleted = false
                     });
                     continue;
                 }
@@ -167,7 +168,8 @@ namespace QuizuApi.Repository
                 {
                     AnswerGivenId = guid,
                     QuestionId = ans.QuestionId,
-                    TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i])
+                    TimeTaken = TimeSpan.FromSeconds(answers.TimeTookS[i]),
+                    IsDeleted = false
                 });
             }
             var play = new QuizPlay()
@@ -175,7 +177,8 @@ namespace QuizuApi.Repository
                 QuizId = quizId,
                 Answers = userAns,
                 Score = answers.Score,
-                UserId = userId
+                UserId = userId,
+                IsDeleted = false
             };
             
             await _context.QuizPlays.AddAsync(play);

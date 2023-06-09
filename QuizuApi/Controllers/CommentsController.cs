@@ -91,6 +91,7 @@ namespace QuizuApi.Controllers
                 Content = request.Content,
                 AuthorId = userId,
                 QuizId = request.QuizId,
+                IsDeleted = false
             };
             try
             {

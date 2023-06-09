@@ -4,10 +4,11 @@ using System.Linq.Expressions;
 using System.Linq;
 using QuizuApi.Data;
 using QuizuApi.Models.DTOs;
+using QuizuApi.Models.Database;
 
 namespace QuizuApi.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : AuditModel
     {
         protected readonly QuizuApiDbContext _context;
         internal DbSet<T> dbSet;
@@ -26,7 +27,8 @@ namespace QuizuApi.Repository
 
         public virtual async Task DeleteAsync(T entity)
         {
-            dbSet.Remove(entity);
+            entity.IsDeleted = true;
+            dbSet.Update(entity);
             await SaveAsync();
         }
 
@@ -41,7 +43,7 @@ namespace QuizuApi.Repository
                                                     Expression<Func<T, bool>>? filter = null,
                                                     string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.Where(x => x.IsDeleted == false);
 
             if (filter is not null)
             {
@@ -69,7 +71,7 @@ namespace QuizuApi.Repository
 
         public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.Where(x => x.IsDeleted == false);
 
             if (filter is not null)
             {
@@ -89,7 +91,7 @@ namespace QuizuApi.Repository
 
         public async Task<T?> GetAsync(Expression<Func<T, bool>>? filter, bool tracked = true, string? includeProperties = null)
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.Where(x => x.IsDeleted == false);
 
             if (!tracked)
             {

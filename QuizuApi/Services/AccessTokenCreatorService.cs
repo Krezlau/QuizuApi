@@ -20,7 +20,7 @@ namespace QuizuApi.Services
 
         public async Task<string> GenerateJwtTokenAsync(string userId)
         {
-            var user = new User { Id = userId };
+            var user = new User { Id = userId, IsDeleted = false };
             var roles = await _userManager.GetRolesAsync(user);
             var tokenHandler = new JwtSecurityTokenHandler();
 
