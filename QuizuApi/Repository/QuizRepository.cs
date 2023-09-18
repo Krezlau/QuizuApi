@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FuzzySharp;
+using Microsoft.EntityFrameworkCore;
 using QuizuApi.Data;
 using QuizuApi.Models.Database;
 using QuizuApi.Models.DTOs;
@@ -67,6 +68,28 @@ namespace QuizuApi.Repository
             //_context.QuizComments.RemoveRange(await _context.QuizComments.Where(qc => qc.QuizId == entity.Id).ToArrayAsync());
             //_context.QuizPlays.RemoveRange(await _context.QuizPlays.Where(qp => qp.QuizId == entity.Id).ToArrayAsync());
             await base.DeleteAsync(entity);
+        }
+
+        public async Task<PageResultDTO<Quiz>> FuzzySearchQuizzes(string query, int pageNumber, int pageSize)
+        {
+            var fuzzyScores = Process.ExtractSorted(query, await _context.Quizzes.Select(q => q.Title).ToArrayAsync());
+
+            // Filter the jobs that have a fuzzy score above a certain threshold
+            var threshold = 50;
+            var filteredResults = fuzzyScores.Where(x => x.Score >= threshold).Select(x => x.Value);
+
+            var searchResults = filteredResults.Skip(pageNumber*pageSize).Take(pageSize);
+            var pageCount = (int)Math.Ceiling((double)filteredResults.Count() / pageSize);
+
+            var quizResults = searchResults.Select(q => _context.Quizzes.Where(qz => qz.Title == q).Include(q => q.Author).Include(q => q.Tags).First()).ToList();
+
+            return new PageResultDTO<Quiz>()
+            {
+                PageCount = pageCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                QueryResult = quizResults
+            };
         }
     }
 }

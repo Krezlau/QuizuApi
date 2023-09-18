@@ -376,5 +376,42 @@ namespace QuizuApi.Controllers
                 Result = outcome
             });
         }
+
+        [HttpGet("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse>> SearchForQuiz([FromQuery] string query, [FromQuery] PageRequestParametersDTO parameters)
+        {
+            var userId = _tokenReader.RetrieveUserIdFromRequest(Request);
+
+            if (query.Length < 3)
+                return new ApiResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    IsSuccess = false,
+                    ErrorMessages = { "Query too short." }
+                };
+
+            var quizResults = await _quizRepo.FuzzySearchQuizzes(query, parameters.PageNumber, parameters.PageSize); 
+
+            var retResult = new List<QuizDTO>();
+            foreach (var quiz in quizResults.QueryResult)
+            {
+                retResult.Add(new QuizDTO(quiz, await _quizRepo.FetchActivityInfoAsync(quiz.Id, userId)));
+            }
+
+            return new ApiResponse()
+            {
+                IsSuccess = true,
+                StatusCode = HttpStatusCode.OK,
+                Result = new PageResultDTO<QuizDTO>()
+                {
+                    PageCount = quizResults.PageCount,
+                    PageNumber = quizResults.PageNumber,
+                    PageSize = quizResults.PageSize,
+                    QueryResult = retResult
+                }
+            };
+        }
     }
 }

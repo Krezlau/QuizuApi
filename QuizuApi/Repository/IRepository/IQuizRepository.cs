@@ -7,5 +7,6 @@ namespace QuizuApi.Repository.IRepository
     {
         Task<QuizActivityDTO> FetchActivityInfoAsync(Guid quizId, string? userId = null);
         Task<bool> CheckIfTitleAvailable(string title);
+        Task<PageResultDTO<Quiz>> FuzzySearchQuizzes(string query, int pageNumber, int pageSize);
     }
 }
