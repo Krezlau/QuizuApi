@@ -384,14 +384,6 @@ namespace QuizuApi.Controllers
         {
             var userId = _tokenReader.RetrieveUserIdFromRequest(Request);
 
-            if (query.Length < 3)
-                return new ApiResponse()
-                {
-                    StatusCode = HttpStatusCode.BadRequest,
-                    IsSuccess = false,
-                    ErrorMessages = { "Query too short." }
-                };
-
             var quizResults = await _quizRepo.FuzzySearchQuizzes(query, parameters.PageNumber, parameters.PageSize); 
 
             var retResult = new List<QuizDTO>();
@@ -400,7 +392,7 @@ namespace QuizuApi.Controllers
                 retResult.Add(new QuizDTO(quiz, await _quizRepo.FetchActivityInfoAsync(quiz.Id, userId)));
             }
 
-            return new ApiResponse()
+            return Ok(new ApiResponse()
             {
                 IsSuccess = true,
                 StatusCode = HttpStatusCode.OK,
@@ -411,7 +403,7 @@ namespace QuizuApi.Controllers
                     PageSize = quizResults.PageSize,
                     QueryResult = retResult
                 }
-            };
+            });
         }
     }
 }
